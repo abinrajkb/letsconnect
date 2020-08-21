@@ -1,0 +1,7 @@
+src/db.sqlite3
+src/venv/
+.vscode/
+**/__pycache__/
+frontend/.cache/
+frontend/dist/
+frontend/node_modules/
