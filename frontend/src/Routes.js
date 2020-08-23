@@ -7,7 +7,7 @@ export class Routes extends Component {
     render() {
         return (
             <div>
-                <Route exact path="/:chatID/" component={Chat} />
+                <Route exact path="/" component={Chat} />
             </div>
         )
     }

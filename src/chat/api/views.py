@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from rest_framework import permissions
 
 from rest_framework.generics import (
@@ -9,14 +10,14 @@ from rest_framework.generics import (
     DestroyAPIView,
     UpdateAPIView
 )
-from chat.models import Chat, Contact
+from chat.models import Chat
 from .serializers import ChatSerializer
 
 
-def get_user_contact(username):
+""" def get_user_contact(username):
     user = get_object_or_404(User, username=username)
     contact = get_object_or_404(Contact, user=user)
-    return contact
+    return contact """
 
 
 class ChatListView(ListAPIView):
@@ -27,8 +28,7 @@ class ChatListView(ListAPIView):
         queryset = Chat.objects.all()
         username = self.request.query_params.get('username', None)
         if username is not None:
-            contact = get_user_contact(username)
-            queryset = contact.chats.all()
+            queryset = Chat.objects.filter(Q(created_by=username) | Q(created_for=username))
         return queryset
 
 

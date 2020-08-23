@@ -6,7 +6,7 @@ export class Profile extends Component {
         return (
             <div className="contact-profile">
                 <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-                {<p>{this.props.chatState.username}</p>}
+                {<p>{this.props.currentChat.chatName}</p>}
                 <div className="social-media">
                     <i className="fa fa-facebook" aria-hidden="true"></i>
                     <i className="fa fa-twitter" aria-hidden="true"></i>
@@ -18,7 +18,7 @@ export class Profile extends Component {
 }
 
 const mapStateToProps = state => ({
-    chatState: state
+    currentChat: state.chat,
 })
 
 export default connect(mapStateToProps)(Profile)

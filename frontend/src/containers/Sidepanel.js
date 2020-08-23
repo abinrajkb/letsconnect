@@ -42,9 +42,12 @@ export class Sidepanel extends Component {
     render() {
 
         const activeChats = this.state.chats.map(c => {
+            let chatName = null
+            if (c.created_by == this.props.contactState.username) chatName = c.created_for
+            else chatName = c.created_by
             return (
-                <Contact key={c.id} name="harvey" status="online" chatURL={`/${c.id}`}
-                    picURL="http://emilcarlsson.se/assets/louislitt.png" />
+                <Contact key={c.id} name={chatName} status="online" chatID={c.id}
+                    picURL="http://emilcarlsson.se/assets/harveyspecter.png" />
             )
         })
 
@@ -53,7 +56,7 @@ export class Sidepanel extends Component {
                 <div id="profile">
                     <div className="wrap">
                         <img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" className="online" alt="" />
-                        <p>Mike Ross</p>
+                        <p>{this.props.contactState.username}</p>
                         <i className="fa fa-chevron-down expand-button" aria-hidden="true"></i>
                         <div id="status-options">
                             <ul>
@@ -112,7 +115,7 @@ export class Sidepanel extends Component {
 }
 
 const mapStateToProps = state => ({
-    contactState: state
+    contactState: state.auth
 })
 
 export default connect(mapStateToProps, { logout })(Sidepanel)

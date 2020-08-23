@@ -2,10 +2,14 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import webSocketInstance from '../websocket'
 import '../assets/style.css'
+import Profile from './Profile'
 
 class Chat extends Component {
 
-    state = { message: '' }
+    state = {
+        message: '',
+        chatID: null
+    }
 
     constructor(props) {
         super(props)
@@ -13,6 +17,7 @@ class Chat extends Component {
     }
 
     componentDidMount() {
+        this.setState({ chatID: this.props.currentChat.chatID })
         this.scrollToBottom();
     }
 
@@ -21,12 +26,13 @@ class Chat extends Component {
     }
 
     UNSAFE_componentWillReceiveProps(newProps) {
-        if (this.props.match.params.chatID !== newProps.match.params.chatID) {
+        if (this.state.chatID !== newProps.currentChat.chatID) {
+            this.setState({ chatID: newProps.currentChat.chatID })
             webSocketInstance.disconnect()
             this.waitForSocketConnection(() => {
-                webSocketInstance.fetchMessages(this.props.chatState.username, newProps.match.params.chatID)
+                webSocketInstance.fetchMessages(this.props.chatState.username, this.props.currentChat.chatID)
             })
-            webSocketInstance.connect(newProps.match.params.chatID)
+            webSocketInstance.connect(this.props.currentChat.chatID)
         }
     }
 
@@ -40,9 +46,10 @@ class Chat extends Component {
                 this.setMessages.bind(this),
                 this.addMessage.bind(this)
             );
-            webSocketInstance.fetchMessages(this.props.chatState.username, this.props.match.params.chatID)
+            /* webSocketInstance.fetchMessages(this.props.chatState.username, this.props.match.params.chatID) */
+            webSocketInstance.fetchMessages(this.props.chatState.username, this.props.currentChat.chatID)
         })
-        webSocketInstance.connect(this.props.match.params.chatID)
+        webSocketInstance.connect(this.props.currentChat.chatID)
     }
 
     waitForSocketConnection(callback) {
@@ -61,6 +68,7 @@ class Chat extends Component {
     }
 
     addMessage(message) {
+        console.log("add message called with ", message)
         this.setState({
             messages: [...this.state.messages, message]
         })
@@ -114,7 +122,7 @@ class Chat extends Component {
         const messageObject = {
             from: this.props.chatState.username,
             content: this.state.message,
-            chatID: this.props.match.params.chatID
+            chatID: this.props.currentChat.chatID
         }
         webSocketInstance.newChatMessage(messageObject)
         this.setState({
@@ -135,6 +143,8 @@ class Chat extends Component {
         return (
 
             <div>
+                <Profile />
+
                 <div className="messages">
                     <ul id="chat-log">
                         {
@@ -169,7 +179,8 @@ class Chat extends Component {
 }
 
 const mapStateToProps = state => ({
-    chatState: state
+    chatState: state.auth,
+    currentChat: state.chat
 })
 
 export default connect(mapStateToProps)(Chat)

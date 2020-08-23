@@ -38,7 +38,7 @@ const authLogout = (state, action) => {
     })
 }
 
-const reducer = (state = initialState, action) => {
+const authReducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.AUTH_START: return authStart(state, action)
         case actionTypes.AUTH_SUCCESS: return authSuccess(state, action)
@@ -48,4 +48,4 @@ const reducer = (state = initialState, action) => {
     }
 }
 
-export default reducer
+export default authReducer
