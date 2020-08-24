@@ -1,4 +1,5 @@
 import * as actionTypes from './actionTypes'
+import webSocketInstance from '../../websocket'
 import axios from 'axios'
 
 export const authStart = () => {
@@ -23,9 +24,18 @@ export const authFail = (error) => {
 }
 
 export const logout = () => {
+    try {
+        if (webSocketInstance.state()) {
+            webSocketInstance.disconnect()
+        }
+    } catch (error) {
+        console.log('')
+    }
     localStorage.removeItem('token')
     localStorage.removeItem('username')
     localStorage.removeItem('expire')
+    localStorage.removeItem('chatID')
+    localStorage.removeItem('chatName')
     return {
         type: actionTypes.AUTH_LOGOUT,
     }
@@ -55,7 +65,7 @@ export const authLogin = (username, password) => {
             dispatch(checkAuthTimeout(3600))
         })
             .catch(err => {
-                dispatch(authFail(err))
+                dispatch(authFail(err.response.data.non_field_errors[0]))
             })
     }
 }
@@ -78,7 +88,13 @@ export const authSignup = (username, email, password) => {
             dispatch(checkAuthTimeout(3600))
         })
             .catch(err => {
-                dispatch(authFail(err))
+                console.log(err.response)
+                let errMsg = ''
+                if (err.response.data.username) errMsg = errMsg + 'Username should not be blank.\n'
+                if (err.response.data.email) errMsg = errMsg + err.response.data.email + '\n'
+                if (err.response.data.password1) errMsg = errMsg + err.response.data.password1 + '\n'
+                console.log(errMsg)
+                dispatch(authFail(errMsg))
             })
     }
 }

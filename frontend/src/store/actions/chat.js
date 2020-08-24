@@ -10,6 +10,14 @@ export const changeChat = (chatID, chatName) => {
     }
 }
 
+export const clearChat = () => {
+    localStorage.removeItem('chatID')
+    localStorage.removeItem('chatName')
+    return {
+        type: actionTypes.CLEAR_CHAT,
+    }
+}
+
 export const checkChat = () => {
     return dispatch => {
         const chatID = localStorage.getItem('chatID')

@@ -38,7 +38,7 @@ export class Login extends Component {
 
         let errorMsg = null
         if (error) {
-            errorMsg = (<p>{error.message}</p>)
+            errorMsg = (<p>{error}</p>)
         }
 
         return (
@@ -51,7 +51,7 @@ export class Login extends Component {
                         {
                             loading ?
 
-                                <form onSubmit={this.loginSubmit}>
+                                <form>
                                     <fieldset className="form-group">
                                         <img className="form-group text-center" src={Avatar} />
                                         <h5 className=" mb-4 text-center">WELCOME</h5>

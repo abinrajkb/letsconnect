@@ -2,16 +2,18 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 import { logout } from '../store/actions/auth'
+import { clearChat } from '../store/actions/chat'
 import Contact from '../components/Contact'
 
 export class Sidepanel extends Component {
 
     state = {
-        chats: []
+        chats: [],
+        newChatUsername: '',
+        error: null
     }
 
     UNSAFE_componentWillReceiveProps(newProps) {
-        console.log("hello")
         if (newProps.contactState.token !== null && newProps.contactState.username !== null) {
             this.getUserChats(newProps.contactState.token, newProps.contactState.username)
         }
@@ -29,14 +31,42 @@ export class Sidepanel extends Component {
     } */
 
     getUserChats = (token, username) => {
-        /* axios.defaults.headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`
-        } */
         axios.get(`http://127.0.0.1:8000/chat/?username=${username}`)
             .then(res => {
                 this.setState({ chats: res.data })
             })
+    }
+
+    onChange = e => this.setState({ [e.target.name]: e.target.value })
+
+    addChat = e => {
+        e.preventDefault()
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${this.props.contactState.token}`
+        }
+        axios.post('http://127.0.0.1:8000/chat/create/', {
+            created_by: this.props.contactState.username,
+            created_for: this.state.newChatUsername
+        })
+            .then(res => {
+                this.setState({ error: null })
+                this.getUserChats(this.props.contactState.token, this.props.contactState.username)
+            })
+            .catch(err => {
+                this.setState({ error: err.response.data })
+            })
+
+        this.setState({ newChatUsername: '' })
+    }
+
+    addChatBtnClick = () => {
+        document.getElementById("expand").click();
+    }
+
+    clearStorage = () => {
+        this.props.logout()
+        this.props.clearChat()
     }
 
     render() {
@@ -51,13 +81,18 @@ export class Sidepanel extends Component {
             )
         })
 
+        /* let errorMsg = null
+        if (this.state.error) {
+            errorMsg = (<p>{this.state.error}</p>)
+        } */
+
         return (
             <div id="sidepanel">
                 <div id="profile">
                     <div className="wrap">
                         <img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" className="online" alt="" />
                         <p>{this.props.contactState.username}</p>
-                        <i className="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+                        <i className="fa fa-chevron-down expand-button" aria-hidden="true" id="expand"></i>
                         <div id="status-options">
                             <ul>
                                 <li id="status-online" className="active"><span className="status-circle"></span>
@@ -74,14 +109,22 @@ export class Sidepanel extends Component {
                                 </li>
                             </ul>
                         </div>
-                        {/* <div id="expanded">
-                        <label htmlFor="twitter"><i className="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
+                        <div id="expanded">
+
+                            <div id="error">{this.state.error}</div>
+
+                            <form onSubmit={this.addChat}>
+                                <input name="newChatUsername" type="text" onChange={this.onChange}
+                                    value={this.state.newChatUsername} placeholder="enter the userID" />
+                                <button type="submit">start chat</button>
+                            </form>
+                            {/* <label htmlFor="twitter"><i className="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
                         <input name="twitter" type="text" value="mikeross" />
                         <label htmlFor="twitter"><i className="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
                         <input name="twitter" type="text" value="ross81" />
                         <label htmlFor="twitter"><i className="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
-                        <input name="twitter" type="text" value="mike.ross" />
-                    </div> */}
+                        <input name="twitter" type="text" value="mike.ross" /> */}
+                        </div>
                     </div>
                 </div>
                 <div id="search">
@@ -101,13 +144,15 @@ export class Sidepanel extends Component {
 
                     </ul>
                 </div>
-                {/* <div id="logout-bar" style={{ paddingBottom: "50px" }}>
-                <button id="logout"><i className="fa fa-lock fa-fw" aria-hidden="true"></i> <span>Logout</span></button>
-            </div> */}
+
                 <div id="bottom-bar">
-                    <button id="addcontact"><i className="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add
+
+                    {/* <button id="addcontact" onClick={this.addChat}><i className="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add
+                        contact</span></button> */}
+                    <button id="addcontact" onClick={this.addChatBtnClick}><i className="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add
                         contact</span></button>
-                    <button id="settings" onClick={this.props.logout}><i className="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Logout</span></button>
+
+                    <button id="settings" onClick={this.clearStorage}><i className="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Logout</span></button>
                 </div>
             </div>
         )
@@ -118,5 +163,5 @@ const mapStateToProps = state => ({
     contactState: state.auth
 })
 
-export default connect(mapStateToProps, { logout })(Sidepanel)
+export default connect(mapStateToProps, { logout, clearChat })(Sidepanel)
 

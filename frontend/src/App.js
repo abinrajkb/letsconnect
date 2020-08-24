@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 import Chat from './containers/Chat'
-import Profile from './containers/Profile'
 import Login from './containers/Login'
 import Routes from './Routes'
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
@@ -26,7 +25,6 @@ class App extends React.Component {
                         <div id="frame">
                             <Sidepanel />
                             <div className="content">
-                                {/* <Profile /> */}
                                 <Route exact path="/" component={Chat} />
                             </div>
                         </div>

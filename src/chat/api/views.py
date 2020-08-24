@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from rest_framework import permissions
+from rest_framework.response import Response
+from rest_framework import serializers
 
 from rest_framework.generics import (
     ListAPIView,
@@ -12,12 +14,6 @@ from rest_framework.generics import (
 )
 from chat.models import Chat
 from .serializers import ChatSerializer
-
-
-""" def get_user_contact(username):
-    user = get_object_or_404(User, username=username)
-    contact = get_object_or_404(Contact, user=user)
-    return contact """
 
 
 class ChatListView(ListAPIView):
@@ -42,6 +38,26 @@ class ChatCreateView(CreateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
     permission_classes = (permissions.IsAuthenticated, )
+
+    def perform_create(self, serializer):
+        chat = None
+        created_by = serializer.data['created_by']
+        created_for = serializer.data['created_for']
+        
+        try:
+            user= User.objects.get(username=created_for)
+            checkChat = Chat.objects.filter(Q(created_by=created_by, created_for=created_for) | 
+            Q(created_by=created_for, created_for=created_by))
+
+            if checkChat.count()==0:
+                chat = Chat.objects.create(created_by = created_by, created_for = created_for)
+            else:
+                raise serializers.ValidationError("chat already exists")
+            
+        except User.DoesNotExist:
+            raise serializers.ValidationError("user does not exist")
+
+        return chat
 
 
 class ChatUpdateView(UpdateAPIView):

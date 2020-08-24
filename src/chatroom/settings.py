@@ -144,6 +144,16 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication'
+    ],
+
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ]
+}
+
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 CORS_ORIGIN_ALLOW_ALL = True

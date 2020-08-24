@@ -13,9 +13,17 @@ const changeChat = (state, action) => {
     })
 }
 
+const clearChat = (state, action) => {
+    return updateObject(state, {
+        chatID: null,
+        chatName: null
+    })
+}
+
 const chatReducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.CHANGE_CHAT: return changeChat(state, action)
+        case actionTypes.CLEAR_CHAT: return clearChat(state, action)
         default: return state
     }
 }

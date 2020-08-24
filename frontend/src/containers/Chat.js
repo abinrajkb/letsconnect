@@ -2,18 +2,19 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import webSocketInstance from '../websocket'
 import '../assets/style.css'
-import Profile from './Profile'
+import Navbar from './Navbar'
 
 class Chat extends Component {
 
     state = {
         message: '',
-        chatID: null
+        chatID: null,
+        newSession: true
     }
 
     constructor(props) {
         super(props)
-        this.initializeChat();
+        /* this.initializeChat(); */
     }
 
     componentDidMount() {
@@ -28,11 +29,18 @@ class Chat extends Component {
     UNSAFE_componentWillReceiveProps(newProps) {
         if (this.state.chatID !== newProps.currentChat.chatID) {
             this.setState({ chatID: newProps.currentChat.chatID })
-            webSocketInstance.disconnect()
+            if (!this.state.newSession) {
+                webSocketInstance.disconnect()
+            }
+            this.setState({ newSession: false })
             this.waitForSocketConnection(() => {
-                webSocketInstance.fetchMessages(this.props.chatState.username, this.props.currentChat.chatID)
+                webSocketInstance.addCallbacks(
+                    this.setMessages.bind(this),
+                    this.addMessage.bind(this)
+                );
+                webSocketInstance.fetchMessages(this.props.chatState.username, newProps.currentChat.chatID)
             })
-            webSocketInstance.connect(this.props.currentChat.chatID)
+            webSocketInstance.connect(newProps.currentChat.chatID)
         }
     }
 
@@ -68,7 +76,6 @@ class Chat extends Component {
     }
 
     addMessage(message) {
-        console.log("add message called with ", message)
         this.setState({
             messages: [...this.state.messages, message]
         })
@@ -143,7 +150,9 @@ class Chat extends Component {
         return (
 
             <div>
-                <Profile />
+
+                {(!this.state.newSession) ? <Navbar /> : ''}
+
 
                 <div className="messages">
                     <ul id="chat-log">
