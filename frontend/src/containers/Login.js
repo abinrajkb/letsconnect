@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import '../assets/login.css'
-import Avatar from '../assets/avatar.svg'
 import { connect } from 'react-redux'
 import { authLogin, authSignup } from '../store/actions/auth'
 import Spinner from 'react-bootstrap/Spinner';
@@ -8,12 +7,24 @@ import Spinner from 'react-bootstrap/Spinner';
 export class Login extends Component {
 
     state = {
+        picURL: 'profilePics/avatar.svg',
         islogin: true,
         login_username: '',
         login_password: '',
         signup_username: '',
         signup_email: '',
         signup_password: ''
+    }
+
+    componentDidMount() {
+        this.getProfilePic()
+    }
+
+    getProfilePic = () => {
+        var storedPic = localStorage.getItem('profilePic')
+        if (storedPic !== null) {
+            this.setState({ picURL: storedPic })
+        }
     }
 
     onChange = e => this.setState({ [e.target.name]: e.target.value })
@@ -53,7 +64,7 @@ export class Login extends Component {
 
                                 <form>
                                     <fieldset className="form-group">
-                                        <img className="form-group text-center" src={Avatar} />
+                                        <img className="form-group text-center" src={`http://localhost:8000/media/${this.state.picURL}`} />
                                         <h5 className=" mb-4 text-center">WELCOME</h5>
                                         <div>
                                             <Spinner animation="border" className="my-5" variant='primary' /> <br />
@@ -69,7 +80,7 @@ export class Login extends Component {
 
                                         <form onSubmit={this.loginSubmit}>
                                             <fieldset className="form-group">
-                                                <img className="form-group text-center" src={Avatar} />
+                                                <img className="form-group text-center" src={`http://localhost:8000/media/${this.state.picURL}`} />
                                                 <h5 className=" mb-4 text-center">WELCOME</h5>
 
                                                 <div className="input-field ">
@@ -96,7 +107,7 @@ export class Login extends Component {
 
                                         <form onSubmit={this.signupSubmit}>
                                             <fieldset className="form-group">
-                                                <img className="form-group text-center" src={Avatar} />
+                                                <img className="form-group text-center" src={`http://localhost:8000/media/${this.state.picURL}`} />
                                                 <h5 className=" mb-4 text-center">WELCOME</h5>
 
                                                 <div className="input-field ">

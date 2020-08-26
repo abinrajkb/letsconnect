@@ -6,12 +6,17 @@
 	 display: flex;
 	 
  }
+
+ .outer-login .container {
+	padding-top: 50px;
+}
  
 .login a {
 	color: white !important;
 }
  .login img {
-	 height: 100px;
+	 height: 80px;
+	 width: 80px;
 	 border-radius: 50%;
 	 /* padding-left: 34vw;
 	 padding-bottom: 5px; */
@@ -99,6 +104,6 @@
    
    @media (max-width:570px) {
 	 .outer-login .container {
-		 padding-top: 40%;
+		 padding-top: 100px;
 	 }
    }

@@ -12,18 +12,17 @@ class webSocketService {
     }
 
     constructor() {
-        this.socketRef = null;
+        this.socketRef = null
+        this.unexpectedClose = false
     }
 
-    connect(chatURL) {
-        const path = `ws://127.0.0.1:8000/ws/chat/${chatURL}/`;
+    connect(chatID) {
+        const path = `ws://127.0.0.1:8000/ws/chat/${chatID}/`;
         this.socketRef = new WebSocket(path);
         this.socketRef.onopen = () => {
-            console.log("websocket open");
+            this.unexpectedClose = true
         }
-        /* this.socketNewMessage(JSON.stringify({
-            'command': 'fetch_messages'
-        })) */
+
         this.socketRef.onmessage = e => {
             this.socketNewMessage(e.data)
         }
@@ -31,12 +30,14 @@ class webSocketService {
             console.log(e.message);
         }
         this.socketRef.onclose = () => {
-            console.log("websocket is closed")
-            //this.connect(chatURL);
+            if (this.unexpectedClose) {
+                this.connect(chatID);
+            }
         }
     }
 
     disconnect() {
+        this.unexpectedClose = false
         this.socketRef.close()
     }
 

@@ -1,10 +1,36 @@
 import React, { Component } from 'react'
-import { NavLink } from 'react-router-dom'
+import axios from 'axios'
 import { connect } from 'react-redux'
 import { changeChat } from '../store/actions/chat'
-/* import Chat from '../containers/Chat' */
 
 export class Contact extends Component {
+
+    state = {
+        picURL: ''
+    }
+
+    constructor(props) {
+        super(props)
+        this.getPicURL()
+    }
+
+    getPicURL = () => {
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${this.props.token}`
+        }
+        axios.get('http://127.0.0.1:8000/chat/profile/', {
+            params: {
+                username: this.props.name
+            }
+        })
+            .then(res => {
+                this.setState({ picURL: res.data.picURL })
+            })
+            .catch(err => {
+                console.log('')
+            })
+    }
 
     changeChat = e => {
         this.props.changeChat(this.props.chatID, this.props.name)
@@ -12,18 +38,15 @@ export class Contact extends Component {
 
     render() {
         return (
-            //<NavLink to={`/${this.props.chatID}`} style={{ color: '#fff' }}>
             <li className="contact" onClick={this.changeChat}>
                 <div className="wrap">
-                    <span className="contact-status online"></span>
-                    <img src={this.props.picURL} alt="" />
+                    <img src={`http://localhost:8000/media/${this.state.picURL}`} />
                     <div className="meta">
                         <p className="name">{this.props.name}</p>
-                        {/* <p className="preview">You just got LITT up, Mike.</p> */}
+                        {/* <p className="preview">How are you..</p> */}
                     </div>
                 </div>
             </li>
-            //</NavLink>
         )
     }
 }

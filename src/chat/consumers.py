@@ -17,16 +17,8 @@ class ChatConsumer(WebsocketConsumer):
         self.send_message(content)
 
     def new_message(self, data):
-        """ user_contact = get_user_contact(data['from'])
-        message = Message.objects.create(
-            contact=user_contact, content=data['message'])
         current_chat = get_current_chat(data['chatID'])
-        current_chat.messages.add(message)
-        current_chat.save() """
-
-        current_chat = get_current_chat(data['chatID'])
-        message = Message.objects.create(
-            chat=current_chat, content=data['message'], sender=data['from'])
+        message = Message.objects.create(chat=current_chat, content=data['message'], sender=data['from'])
         message.save()
 
         content = {
@@ -70,7 +62,6 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-    # Receive message from WebSocket
     def receive(self, text_data):
         data = json.loads(text_data)
         self.commands[data['command']](self, data)
@@ -89,5 +80,4 @@ class ChatConsumer(WebsocketConsumer):
 
     def chat_message(self, event):
         message = event['message']
-
         self.send(text_data=json.dumps(message))

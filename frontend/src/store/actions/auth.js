@@ -65,7 +65,11 @@ export const authLogin = (username, password) => {
             dispatch(checkAuthTimeout(3600))
         })
             .catch(err => {
-                dispatch(authFail(err.response.data.non_field_errors[0]))
+                let errMsg = ''
+                if (err.response.data.non_field_errors) errMsg = errMsg + err.response.data.non_field_errors[0] + '\n'
+                if (err.response.data.username) errMsg = errMsg + 'Username should not be blank.\n'
+                if (err.response.data.password) errMsg = errMsg + 'Password should not be blank.\n'
+                dispatch(authFail(errMsg))
             })
     }
 }
@@ -88,12 +92,10 @@ export const authSignup = (username, email, password) => {
             dispatch(checkAuthTimeout(3600))
         })
             .catch(err => {
-                console.log(err.response)
                 let errMsg = ''
                 if (err.response.data.username) errMsg = errMsg + 'Username should not be blank.\n'
                 if (err.response.data.email) errMsg = errMsg + err.response.data.email + '\n'
                 if (err.response.data.password1) errMsg = errMsg + err.response.data.password1 + '\n'
-                console.log(errMsg)
                 dispatch(authFail(errMsg))
             })
     }

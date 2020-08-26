@@ -4,16 +4,15 @@ from django.db.models import Q
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import serializers
+from django.http import JsonResponse
 
 from rest_framework.generics import (
     ListAPIView,
-    RetrieveAPIView,
     CreateAPIView,
     DestroyAPIView,
-    UpdateAPIView
 )
-from chat.models import Chat
-from .serializers import ChatSerializer
+from chat.models import Chat, Profile
+from .serializers import ChatSerializer, ProfileSerializer
 
 
 class ChatListView(ListAPIView):
@@ -26,12 +25,6 @@ class ChatListView(ListAPIView):
         if username is not None:
             queryset = Chat.objects.filter(Q(created_by=username) | Q(created_for=username))
         return queryset
-
-
-class ChatDetailView(RetrieveAPIView):
-    queryset = Chat.objects.all()
-    serializer_class = ChatSerializer
-    permission_classes = (permissions.AllowAny, )
 
 
 class ChatCreateView(CreateAPIView):
@@ -60,13 +53,32 @@ class ChatCreateView(CreateAPIView):
         return chat
 
 
-class ChatUpdateView(UpdateAPIView):
-    queryset = Chat.objects.all()
-    serializer_class = ChatSerializer
-    permission_classes = (permissions.IsAuthenticated, )
-
-
 class ChatDeleteView(DestroyAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
     permission_classes = (permissions.IsAuthenticated, )
+
+
+
+
+class ProfileViewSet(ListAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+    def post(self, request, *args, **kwargs):
+        username = request.data['username']
+        user = User.objects.get(username=username)
+        file = request.data['newDp']
+        profile = Profile.objects.get(user=user)
+        profile.profilePic=file
+        profile.save()
+        return JsonResponse({"picURL": "{}".format(profile.profilePic)})
+
+    def get(self, request, *args, **kwargs):
+        username = request.query_params['username']
+        user = User.objects.get(username=username)
+        try:
+            profile = Profile.objects.get(user=user)
+        except Profile.DoesNotExist:
+            profile = Profile.objects.create(user=user)
+        return JsonResponse({"picURL": "{}".format(profile.profilePic)})

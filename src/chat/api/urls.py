@@ -2,16 +2,14 @@ from django.urls import path
 
 from .views import (
     ChatListView,
-    ChatDetailView,
     ChatCreateView,
-    ChatUpdateView,
-    ChatDeleteView
+    ChatDeleteView,
+    ProfileViewSet
 )
 
 urlpatterns = [
     path('', ChatListView.as_view()),
     path('create/', ChatCreateView.as_view()),
-    path('<pk>', ChatDetailView.as_view()),
-    path('<pk>/update/', ChatUpdateView.as_view()),
     path('<pk>/delete/', ChatDeleteView.as_view()),
+    path('profile/', ProfileViewSet.as_view())
 ]

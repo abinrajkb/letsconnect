@@ -1,8 +1,7 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import Chat from './containers/Chat'
 import Login from './containers/Login'
-import Routes from './Routes'
-import { HashRouter as Router, Route, Switch } from 'react-router-dom'
+import { HashRouter as Router, Route } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { authCheckState } from '../src/store/actions/auth'
 import { checkChat } from '../src/store/actions/chat'
@@ -19,7 +18,6 @@ class App extends React.Component {
     render() {
         return (
             <Router>
-                {/* <Switch> */}
                 {this.props.routingState.token ?
                     <div id="chat">
                         <div id="frame">
@@ -33,7 +31,6 @@ class App extends React.Component {
                     :
                     <Route path="/" component={Login} />
                 }
-                {/* </Switch> */}
             </Router>
         )
     }

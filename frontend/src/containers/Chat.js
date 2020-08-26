@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import axios from 'axios'
 import webSocketInstance from '../websocket'
 import '../assets/style.css'
 import Navbar from './Navbar'
@@ -9,12 +10,8 @@ class Chat extends Component {
     state = {
         message: '',
         chatID: null,
-        newSession: true
-    }
-
-    constructor(props) {
-        super(props)
-        /* this.initializeChat(); */
+        newSession: true,
+        picURL: ''
     }
 
     componentDidMount() {
@@ -29,6 +26,7 @@ class Chat extends Component {
     UNSAFE_componentWillReceiveProps(newProps) {
         if (this.state.chatID !== newProps.currentChat.chatID) {
             this.setState({ chatID: newProps.currentChat.chatID })
+            this.getPicURL(newProps.currentChat.chatName)
             if (!this.state.newSession) {
                 webSocketInstance.disconnect()
             }
@@ -44,32 +42,34 @@ class Chat extends Component {
         }
     }
 
-    scrollToBottom = () => {
-        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    getPicURL = (chatName) => {
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${this.props.chatState.token}`
+        }
+        axios.get('http://127.0.0.1:8000/chat/profile/', {
+            params: {
+                username: chatName
+            }
+        })
+            .then(res => {
+                this.setState({ picURL: res.data.picURL })
+            })
+            .catch(err => { })
     }
 
-    initializeChat() {
-        this.waitForSocketConnection(() => {
-            webSocketInstance.addCallbacks(
-                this.setMessages.bind(this),
-                this.addMessage.bind(this)
-            );
-            /* webSocketInstance.fetchMessages(this.props.chatState.username, this.props.match.params.chatID) */
-            webSocketInstance.fetchMessages(this.props.chatState.username, this.props.currentChat.chatID)
-        })
-        webSocketInstance.connect(this.props.currentChat.chatID)
+    scrollToBottom = () => {
+        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
 
     waitForSocketConnection(callback) {
         const component = this;
         setTimeout(function () {
             if (webSocketInstance.state() === 1) {
-                console.log("connection is made")
                 callback();
                 return;
             }
             else {
-                console.log("waiting for connection")
                 component.waitForSocketConnection(callback)
             }
         }, 100)
@@ -112,7 +112,6 @@ class Chat extends Component {
         const currentUser = this.props.chatState.username
         return messages.map(message => (
             <li key={message.id} className={message.author === currentUser ? 'sent' : 'replies'}>
-                <img src="http://emilcarlsson.se/assets/mikeross.png" />
                 <p>
                     {message.content}
                     <br />
@@ -151,7 +150,7 @@ class Chat extends Component {
 
             <div>
 
-                {(!this.state.newSession) ? <Navbar /> : ''}
+                {(!this.state.newSession) ? <Navbar picURL={this.state.picURL} /> : ''}
 
 
                 <div className="messages">
@@ -165,21 +164,25 @@ class Chat extends Component {
                         </div>
                     </ul>
                 </div>
-                <div className="message-input">
-                    <form onSubmit={this.sendMessageHandler}>
-                        <div className="wrap">
-                            <input id="chat-message-input" type="text" style={{ fontSize: "20px" }} placeholder="Write your message..."
-                                value={this.state.message} onChange={this.messageChangeHandler} />
-                            <i className="fa fa-paperclip attachment" aria-hidden="true"></i>
-                            <button id="chat-message-submit" className="submit">
-                                <i className="fa fa-paper-plane" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    </form>
 
-                </div>
-                {/* <input id="room_name" type="hidden" value="{{ room_name }}" />
-                <input id="user_name" type="hidden" value="{{ user_name }}" /> */}
+                {(!this.state.newSession) ?
+
+                    <div className="message-input">
+                        <form onSubmit={this.sendMessageHandler}>
+                            <div className="wrap">
+                                <input id="chat-message-input" type="text" placeholder="Write your message..."
+                                    value={this.state.message} onChange={this.messageChangeHandler} autoComplete="off" />
+                                <button id="chat-message-submit" className="submit">
+                                    <i className="fa fa-paper-plane" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    :
+                    ''
+                }
+
             </div>
 
 
