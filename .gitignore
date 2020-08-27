@@ -1,7 +1,5 @@
-src/db.sqlite3
-src/venv/
+letsconnect/db.sqlite3
+venv/
 .vscode/
 **/__pycache__/
-frontend/.cache/
-frontend/dist/
-frontend/node_modules/
+node_modules/

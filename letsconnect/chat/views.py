@@ -9,4 +9,3 @@ def get_last_10_messages(chatID):
 
 def get_current_chat(chatID):
     return get_object_or_404(Chat, id=chatID)
-
