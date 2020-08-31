@@ -10,7 +10,7 @@ export class Navbar extends Component {
             'Authorization': `Token ${this.props.authState.token}`
         }
         const ID = this.props.currentChat.chatID
-        axios.delete(`http://127.0.0.1:8000/chat/${ID}/delete/`)
+        axios.delete(`${process.env.DOMAIN_NAME}/chat/${ID}/delete/`)
             .then(res => {
                 window.location.reload(false);
             })
@@ -23,7 +23,7 @@ export class Navbar extends Component {
     render() {
         return (
             <div className="contact-profile">
-                <img src={`http://localhost:8000/media/${this.props.picURL}`} alt="" />
+                <img src={`${process.env.DOMAIN_NAME}/media/${this.props.picURL}`} alt="" />
                 <p onChange={this.getPicURL}>{this.props.currentChat.chatName}</p>
                 <div className="social-media">
                     <i className="fa fa-trash" onClick={this.deleteChat} aria-hidden="true"></i>

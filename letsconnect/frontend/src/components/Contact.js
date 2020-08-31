@@ -19,7 +19,7 @@ export class Contact extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Token ${this.props.token}`
         }
-        axios.get('http://127.0.0.1:8000/chat/profile/', {
+        axios.get(`${process.env.DOMAIN_NAME}/chat/profile/`, {
             params: {
                 username: this.props.name
             }
@@ -40,7 +40,7 @@ export class Contact extends Component {
         return (
             <li className="contact" onClick={this.changeChat}>
                 <div className="wrap">
-                    <img src={`http://localhost:8000/media/${this.state.picURL}`} />
+                    <img src={`${process.env.DOMAIN_NAME}/media/${this.state.picURL}`} />
                     <div className="meta">
                         <p className="name">{this.props.name}</p>
                         {/* <p className="preview">How are you..</p> */}

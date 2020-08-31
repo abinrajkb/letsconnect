@@ -64,7 +64,7 @@ export class Login extends Component {
 
                                 <form>
                                     <fieldset className="form-group">
-                                        <img className="form-group text-center" src={`http://localhost:8000/media/${this.state.picURL}`} />
+                                        <img className="form-group text-center" src={`${process.env.DOMAIN_NAME}/media/${this.state.picURL}`} />
                                         <h5 className=" mb-4 text-center">WELCOME</h5>
                                         <div>
                                             <Spinner animation="border" className="my-5" variant='primary' /> <br />
@@ -80,7 +80,7 @@ export class Login extends Component {
 
                                         <form onSubmit={this.loginSubmit}>
                                             <fieldset className="form-group">
-                                                <img className="form-group text-center" src={`http://localhost:8000/media/${this.state.picURL}`} />
+                                                <img className="form-group text-center" src={`${process.env.DOMAIN_NAME}/media/${this.state.picURL}`} />
                                                 <h5 className=" mb-4 text-center">WELCOME</h5>
 
                                                 <div className="input-field ">
@@ -107,7 +107,7 @@ export class Login extends Component {
 
                                         <form onSubmit={this.signupSubmit}>
                                             <fieldset className="form-group">
-                                                <img className="form-group text-center" src={`http://localhost:8000/media/${this.state.picURL}`} />
+                                                <img className="form-group text-center" src={`${process.env.DOMAIN_NAME}/media/${this.state.picURL}`} />
                                                 <h5 className=" mb-4 text-center">WELCOME</h5>
 
                                                 <div className="input-field ">

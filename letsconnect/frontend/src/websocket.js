@@ -1,3 +1,4 @@
+const DOMAIN_NAME = process.env.DOMAIN_NAME.split("/")[2]
 
 class webSocketService {
 
@@ -17,7 +18,7 @@ class webSocketService {
     }
 
     connect(chatID) {
-        const path = `ws://127.0.0.1:8000/ws/chat/${chatID}/`;
+        const path = `ws://${DOMAIN_NAME}/ws/chat/${chatID}/`;
         this.socketRef = new WebSocket(path);
         this.socketRef.onopen = () => {
             this.unexpectedClose = true

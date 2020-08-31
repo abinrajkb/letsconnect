@@ -44,7 +44,7 @@ export class Sidepanel extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Token ${this.props.contactState.token}`
         }
-        axios.get('http://127.0.0.1:8000/chat/profile/', {
+        axios.get(`${process.env.DOMAIN_NAME}/chat/profile/`, {
             params: {
                 username: this.props.contactState.username
             }
@@ -59,7 +59,7 @@ export class Sidepanel extends Component {
     }
 
     getUserChats = (token, username) => {
-        axios.get(`http://127.0.0.1:8000/chat/?username=${username}`)
+        axios.get(`${process.env.DOMAIN_NAME}/chat/?username=${username}`)
             .then(res => {
                 this.setState({ chats: res.data })
                 this.setState({ filteredChats: res.data })
@@ -106,7 +106,7 @@ export class Sidepanel extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Token ${this.props.contactState.token}`
         }
-        axios.post('http://127.0.0.1:8000/chat/create/', {
+        axios.post(`${process.env.DOMAIN_NAME}/chat/create/`, {
             created_by: this.props.contactState.username,
             created_for: this.state.newChatUsername
         })
@@ -132,7 +132,7 @@ export class Sidepanel extends Component {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Token ${this.props.contactState.token}`
         }
-        axios.post('http://127.0.0.1:8000/chat/profile/', formData)
+        axios.post(`${process.env.DOMAIN_NAME}/chat/profile/`, formData)
             .then(res => {
                 this.setState({ picURL: res.data.picURL })
                 this.setState({ newDp: null })
@@ -176,7 +176,7 @@ export class Sidepanel extends Component {
             <div id="sidepanel">
                 <div id="profile">
                     <div className="wrap">
-                        <img id="profile-img" src={`http://localhost:8000/media/${this.state.picURL}`} className="online" alt="" />
+                        <img id="profile-img" src={`${process.env.DOMAIN_NAME}/media/${this.state.picURL}`} className="online" alt="" />
                         <p>{this.props.contactState.username}</p>
 
                         <div id="expanded">

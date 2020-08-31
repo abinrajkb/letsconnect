@@ -47,7 +47,7 @@ class Chat extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Token ${this.props.chatState.token}`
         }
-        axios.get('http://127.0.0.1:8000/chat/profile/', {
+        axios.get(`${process.env.DOMAIN_NAME}/chat/profile/`, {
             params: {
                 username: chatName
             }
