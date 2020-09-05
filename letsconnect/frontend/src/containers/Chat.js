@@ -91,7 +91,7 @@ class Chat extends Component {
         let prefix = ''
         const timeDiff = Math.round((new Date().getTime() - new Date(timestamp).getTime()) / 1000)
         if (timeDiff < 60) {
-            prefix = `${timeDiff} seconds ago`
+            prefix = `${Math.abs(timeDiff)} seconds ago`
         }
         else if (timeDiff < 60 * 60 && timeDiff > 60) {
             prefix = `${Math.round(timeDiff / 60)} minutes ago`
